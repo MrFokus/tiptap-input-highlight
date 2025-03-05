@@ -107,6 +107,7 @@ onMounted(() => {
         currentInput.value.innerText =
           "\u200B" + currentInput.value.initialValue;
         moveCaretToStart(currentInput.value);
+        currentInput.value.style.color = "rgba(4, 92, 251, 0.4)"
       } else if (currentInput.value.innerText.length == 0) {
       } else {
         currentInput.value.innerText = currentInput.value.innerText.replaceAll(
