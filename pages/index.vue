@@ -97,8 +97,6 @@ onMounted(() => {
   editor.value?.addEventListener("keydown", highlightSpan);
   editor.value?.addEventListener("input", (ev) => {
     if (currentInput.value) {
-      console.log(currentInput.value);
-
       if (
         ev.inputType == "deleteContentBackward" &&
         currentInput.value.innerText == currentInput.value.initialValue
@@ -116,6 +114,7 @@ onMounted(() => {
           ""
         );
         moveCaretToEnd(currentInput.value);
+        currentInput.value.style.color = "#045cfb"
       }
     }
   });
