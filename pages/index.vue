@@ -11,7 +11,7 @@ import InputPlugin from "~/TipTap/InputPlugin";
 
 const editor = ref();
 const content = ref(
-  "<p>Представь, что ты занимаешь должность <span class='input empty'>укажите должность</span> в <span class='input empty'>укажите орган власти</span> , твои цели заключаются в <span class='input empty'>укажите цели</span> . Твоя задача написать речь для</p><p>выступления на <span class='input empty'>указать тип и название мероприятия</span> . Данное мероприятие приурочено к <span class='input empty'>укажите повод</span> . Твоя речь будет о <span class='input empty'>укажите тематику</span></p>"
+  "<p>Представь, что ты занимаешь должность <span class='input empty'>укажите должность</span> в <span class='input empty'>укажите орган власти</span> , твои цели заключаются в <span class='input empty'>укажите цели</span> . Твоя задача написать речь для выступления на <span class='input empty'>указать тип и название мероприятия</span> . Данное мероприятие приурочено к <span class='input empty'>укажите повод</span> . Твоя речь будет о <span class='input empty'>укажите тематику</span> \u200B</p>"
 );
 
 onMounted(() => {
@@ -28,6 +28,7 @@ onMounted(() => {
 <style scoped>
 .editor {
   max-width: 720px;
+  width: 100%;
   max-height: 200px;
   overflow: auto;
   background-color: #f2f4f7;

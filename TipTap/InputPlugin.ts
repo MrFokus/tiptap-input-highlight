@@ -73,6 +73,19 @@ export default Extension.create({
         this.storage.prevValue = input.textContent;
       }, 0);
     });
+    editor.view.dom.addEventListener("keydown", function (event) {
+      const input = getCurrentInput(editor);
+      const { selection } = editor.state;
+
+      if(!input) return
+      console.log(input.attrs.class.split(' ').includes('empty'),["ArrowLeft", "ArrowRight"].includes(event.key));
+      
+      if (input.attrs.class.split(' ').includes('empty') && ["ArrowLeft", "ArrowRight"].includes(event.key)) {
+        editor.chain().setTextSelection(selection.from).run()
+        event.preventDefault();
+      }
+  });
+  
   },
 });
 
@@ -89,6 +102,7 @@ function addClass(editor, node, className) {
     class: `${node.attrs.class} ${className}`.trim(),
   });
 }
+
 function removeClass(editor, node, className) {
   editor.commands.updateAttributes(node.type.name, {
     ...node.attrs,
