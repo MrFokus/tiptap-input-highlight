@@ -84,7 +84,12 @@ export default Extension.create({
 
       if(!input) return      
       if (input.attrs.class.split(' ').includes('empty') && ["ArrowLeft", "ArrowRight"].includes(event.key)) {
-        editor.chain().setTextSelection(selection.from).run()
+        if(event.key == 'ArrowLeft' ){
+          editor.chain().setTextSelection(selection.$anchor.start()-2).run()
+        }
+        if(event.key == 'ArrowRight' ){
+          editor.chain().setTextSelection(selection.$anchor.end()+2).run()
+        }
         event.preventDefault();
       }
   });
@@ -101,14 +106,12 @@ function getCurrentInput(editor) {
 
 function addClass(editor, node, className) {
   editor.commands.updateAttributes(node.type.name, {
-    ...node.attrs,
     class: `${node.attrs.class} ${className}`.trim(),
   });
 }
 
 function removeClass(editor, node, className) {
   editor.commands.updateAttributes(node.type.name, {
-    ...node.attrs,
     class: node.attrs.class
       .split(" ")
       .filter((cls) => cls !== className)
