@@ -9,16 +9,29 @@ export default Extension.create({
 
     const { selection } = editor.state;
     const { $anchor } = selection;
-
+    
     if (!input.attrs["data-textInit"]) {
       editor
         .chain()
         .insertContentAt($anchor.start(), NULLPTR)
         .updateAttributes("placeholderInput", {
-          "data-textInit": NULLPTR + input.textContent,
+          "data-textInit": NULLPTR + input.textContent + NULLPTR,
         })
         .run();
-      this.storage.prevValue = NULLPTR + input.textContent;
+      this.storage.prevValue = NULLPTR + input.textContent + NULLPTR;
+    }    
+    if (!input.textContent || !input.textContent.replaceAll(NULLPTR,'')) {
+      editor
+        .chain()
+        .deleteRange({ from: $anchor.start(), to: $anchor.end()})
+        .insertContentAt($anchor.start(), input.attrs["data-textInit"])
+        .setTextSelection($anchor.start() + 1)
+        .run();
+        this.storage.prevValue = input.textContent;
+        console.log(input.textContent.split(''));
+        
+        addClass(editor, input, "empty");
+
     }
     if (input.attrs["data-textInit"] === input.textContent) {
       editor
@@ -27,15 +40,6 @@ export default Extension.create({
         .run();
       addClass(editor, input, "empty");
     }
-    if (input.textContent == NULLPTR) {
-      editor
-        .chain()
-        .insertContentAt($anchor.start() + 1, input.attrs["data-textInit"])
-        .setTextSelection($anchor.start() + 1)
-        .deleteRange({ from: $anchor.start(), to: $anchor.start() + 1 })
-        .run();
-    }
-
     if (
       input.textContent === input.attrs["data-textInit"].replaceAll(NULLPTR, "")
     ) {
@@ -47,20 +51,24 @@ export default Extension.create({
     editor.view.dom.addEventListener("input", (ev) => {
       setTimeout(() => {
         const input = getCurrentInput(editor);
-
         if (!input) return;
         const { selection } = editor.state;
-        const { $anchor } = selection;
-
+        const { $anchor } = selection;                
         if (
           input.attrs["data-textInit"] === this.storage.prevValue &&
-          ev.data
-        ) {
+          ev.data || !this.storage.prevValue.replaceAll(NULLPTR, "") && ev.data
+        ) {          
           editor.commands.insertContentAt(
             { from: $anchor.start(), to: $anchor.end() },
-            NULLPTR + ev.data
+            NULLPTR + ev.data + NULLPTR
           );
+          editor.chain().setTextSelection(selection.from).run()
           removeClass(editor, input, "empty");
+        }
+        if (
+          this.storage.prevValue[0] !== input.textContent[0] && input.textContent[0]!==NULLPTR
+        ) {
+          editor.commands.deleteNode("placeholderInput");
         }
         this.storage.prevValue = input.textContent;
       }, 0);

@@ -49,7 +49,14 @@ onMounted(() => {
     outline: none;
     border: none;
   }
+  .tiptap {
+    -moz-user-select: text;
+    -khtml-user-select: text;
+    -webkit-user-select: text;
+    -o-user-select: text;
+  }
   span.input {
+    display: inline;
     border-radius: 8px;
     background: rgba(4, 92, 251, 0.12);
     color: #045cfb;
