@@ -18,6 +18,7 @@ export default Extension.create({
           "data-textInit": NULLPTR + input.textContent,
         })
         .run();
+      this.storage.prevValue = NULLPTR + input.textContent;
     }
     if (input.attrs["data-textInit"] === input.textContent) {
       editor
@@ -44,21 +45,25 @@ export default Extension.create({
 
   onCreate({ editor }) {
     editor.view.dom.addEventListener("input", (ev) => {
-      console.log(ev);
+      setTimeout(() => {
+        const input = getCurrentInput(editor);
 
-      const input = getCurrentInput(editor);
+        if (!input) return;
+        const { selection } = editor.state;
+        const { $anchor } = selection;
 
-      if (!input) return;
-      const { selection } = editor.state;
-      const { $anchor } = selection;
-
-      if (input.attrs["data-textInit"] === input.textContent && ev.data) {
-        editor.commands.insertContentAt(
-          { from: $anchor.start(), to: $anchor.end() },
-          NULLPTR + ev.data
-        );
-        removeClass(editor, input, "empty");
-      }
+        if (
+          input.attrs["data-textInit"] === this.storage.prevValue &&
+          ev.data
+        ) {
+          editor.commands.insertContentAt(
+            { from: $anchor.start(), to: $anchor.end() },
+            NULLPTR + ev.data
+          );
+          removeClass(editor, input, "empty");
+        }
+        this.storage.prevValue = input.textContent;
+      }, 0);
     });
   },
 });
