@@ -6,7 +6,8 @@ export default Extension.create({
   onSelectionUpdate({ editor }) {
     const input = getCurrentInput(editor);
     if (!input) return;
-
+    
+    
     const { selection } = editor.state;
     const { $anchor } = selection;
     
@@ -14,25 +15,27 @@ export default Extension.create({
       editor
         .chain()
         .insertContentAt($anchor.start(), NULLPTR)
+        .insertContentAt($anchor.end()+1, NULLPTR)
         .updateAttributes("placeholderInput", {
           "data-textInit": NULLPTR + input.textContent + NULLPTR,
         })
+        .setTextSelection($anchor.start() + 1)
         .run();
       this.storage.prevValue = NULLPTR + input.textContent + NULLPTR;
-    }    
-    if (!input.textContent || !input.textContent.replaceAll(NULLPTR,'')) {
+    } 
+   
+    if (!input.textContent || !input.textContent.replaceAll(NULLPTR,'')) {            
       editor
         .chain()
         .deleteRange({ from: $anchor.start(), to: $anchor.end()})
         .insertContentAt($anchor.start(), input.attrs["data-textInit"])
         .setTextSelection($anchor.start() + 1)
         .run();
-        this.storage.prevValue = input.textContent;
-        console.log(input.textContent.split(''));
-        
-        addClass(editor, input, "empty");
 
-    }
+        this.storage.prevValue = input.textContent;
+        addClass(editor, input, "empty");
+    }   
+ 
     if (input.attrs["data-textInit"] === input.textContent) {
       editor
         .chain()
@@ -40,11 +43,13 @@ export default Extension.create({
         .run();
       addClass(editor, input, "empty");
     }
+
     if (
       input.textContent === input.attrs["data-textInit"].replaceAll(NULLPTR, "")
     ) {
       editor.commands.deleteNode("placeholderInput");
     }
+
   },
 
   onCreate({ editor }) {
@@ -77,9 +82,7 @@ export default Extension.create({
       const input = getCurrentInput(editor);
       const { selection } = editor.state;
 
-      if(!input) return
-      console.log(input.attrs.class.split(' ').includes('empty'),["ArrowLeft", "ArrowRight"].includes(event.key));
-      
+      if(!input) return      
       if (input.attrs.class.split(' ').includes('empty') && ["ArrowLeft", "ArrowRight"].includes(event.key)) {
         editor.chain().setTextSelection(selection.from).run()
         event.preventDefault();

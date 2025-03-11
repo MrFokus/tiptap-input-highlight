@@ -1,4 +1,5 @@
 import { Mark, Node } from "@tiptap/core";
+import { Plugin } from "@tiptap/pm/state";
 
 export const PlaceholderInput = Node.create({
   name: "placeholderInput",
