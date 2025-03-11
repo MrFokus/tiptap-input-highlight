@@ -4,10 +4,12 @@
 
 <script setup lang="ts">
 import { Editor, EditorContent } from "@tiptap/vue-3";
-import StarterKit from "@tiptap/starter-kit";
 import Focus from "@tiptap/extension-focus";
 import { PlaceholderInput } from "~/TipTap/PlaceholderInputNode";
 import InputPlugin from "~/TipTap/InputPlugin";
+import Document from "@tiptap/extension-document";
+import Paragraph from "@tiptap/extension-paragraph";
+import Text from "@tiptap/extension-text";
 
 const editor = ref();
 const content = ref(
@@ -16,7 +18,7 @@ const content = ref(
 
 onMounted(() => {
   editor.value = new Editor({
-    extensions: [StarterKit, Focus, PlaceholderInput, InputPlugin],
+    extensions: [Document, Paragraph, Text, Focus, PlaceholderInput, InputPlugin],
     content: content.value,
     onUpdate: () => {
       content.value = editor.value.getHTML();
