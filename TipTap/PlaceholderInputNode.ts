@@ -9,6 +9,12 @@ export const PlaceholderInput = Node.create({
   content: "text*",
   isolating: true,
 
+  addKeyboardShortcuts() {
+    return {
+      'Mod-z': () => true,
+    }
+  },
+
   addAttributes() {
     return {
       class: {
