@@ -53,30 +53,19 @@ export default Extension.create({
   },
 
   onCreate({ editor }) {
+    editor.view.dom.addEventListener("paste", (ev) => {
+      ev.preventDefault();
+        const input = getCurrentInput(editor);
+        if (!input) return; 
+        setInput(editor,input,this.storage.prevValue, (ev.clipboardData || window.clipboardData).getData("text"))
+        this.storage.prevValue = input.textContent;
+    });
+
     editor.view.dom.addEventListener("input", (ev) => {
       setTimeout(() => {
         const input = getCurrentInput(editor);
         if (!input) return;
-        const { selection } = editor.state;
-        const { $anchor } = selection;
-        if (
-          (input.attrs["data-textInit"] === this.storage.prevValue &&
-            ev.data) ||
-          (!this.storage.prevValue.replaceAll(NULLPTR, "") && ev.data)
-        ) {
-          editor.commands.insertContentAt(
-            { from: $anchor.start(), to: $anchor.end() },
-            NULLPTR + ev.data + NULLPTR
-          );
-          editor.chain().setTextSelection(selection.from).run();
-          removeClass(editor, input, "empty");
-        }
-        if (
-          this.storage.prevValue[0] !== input.textContent[0] &&
-          input.textContent[0] !== NULLPTR
-        ) {
-          editor.commands.deleteNode("placeholderInput");
-        }
+        setInput(editor,input,this.storage.prevValue,ev.data)
         this.storage.prevValue = input.textContent;
       }, 0);
     });
@@ -127,4 +116,24 @@ function removeClass(editor, node, className) {
       .filter((cls) => cls !== className)
       .join(" "),
   });
+}
+function setInput(editor, input, prevValue, data){
+  if (
+    (input.attrs["data-textInit"] === prevValue &&
+      data) ||
+    (!prevValue.replaceAll(NULLPTR, "") && data)
+  ) {
+    editor.commands.insertContentAt(
+      { from: editor.state.selection.$anchor.start(), to: editor.state.selection.$anchor.end() },
+      NULLPTR + data + NULLPTR
+    );
+    editor.chain().setTextSelection(editor.state.selection.from-1).run();
+    removeClass(editor, input, "empty");
+  }
+  if (
+    prevValue[0] !== input.textContent[0] &&
+    input.textContent[0] !== NULLPTR
+  ) {
+    editor.commands.deleteNode("placeholderInput");
+  }
 }
