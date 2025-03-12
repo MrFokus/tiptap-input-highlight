@@ -1,5 +1,7 @@
 import { Mark, Node } from "@tiptap/core";
 import { Plugin } from "@tiptap/pm/state";
+import { Decoration, DecorationSet } from "@tiptap/pm/view";
+
 
 export const PlaceholderInput = Node.create({
   name: "placeholderInput",
@@ -35,4 +37,32 @@ export const PlaceholderInput = Node.create({
   renderHTML({ HTMLAttributes }) {
     return ["span", HTMLAttributes, 0];
   },
+  addProseMirrorPlugins() {
+    return [
+      new Plugin({
+        props: {
+          decorations: (state) => {
+            const { doc, selection } = state;
+            const decorations = [];
+
+            doc.descendants((node, pos) => {
+              if (node.type.name === "placeholderInput") {
+                const hasFocus = 
+                  selection.from >= pos+1 && selection.to <= pos + node.nodeSize;
+                node.attrs.class.replaceAll("has-focus")
+                decorations.push(
+                  Decoration.node(pos, pos + node.nodeSize, {
+                    class: hasFocus ? node.attrs.class + " has-focus" : node.attrs.class,
+                  })
+                );
+              }
+            });
+            return DecorationSet.create(doc, decorations);
+          },
+        },
+      }),
+    ];
+  },
 });
+
+

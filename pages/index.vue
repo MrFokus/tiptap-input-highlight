@@ -18,7 +18,7 @@ const content = ref(
 
 onMounted(() => {
   editor.value = new Editor({
-    extensions: [Document, Paragraph, Text, Focus, PlaceholderInput, InputPlugin],
+    extensions: [Document, Paragraph, Text, PlaceholderInput, InputPlugin],
     content: content.value,
     onUpdate: () => {
       content.value = editor.value.getHTML();
@@ -67,6 +67,7 @@ onMounted(() => {
     cursor: pointer;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
+    word-break: break-all;
   }
   span.input.empty.has-focus {
     color: rgba(4, 92, 251, 0.4);

@@ -6,41 +6,42 @@ export default Extension.create({
   onSelectionUpdate({ editor }) {
     const input = getCurrentInput(editor);
     if (!input) return;
-    
-    
+
     const { selection } = editor.state;
     const { $anchor } = selection;
-    
+
     if (!input.attrs["data-textInit"]) {
       editor
         .chain()
         .insertContentAt($anchor.start(), NULLPTR)
-        .insertContentAt($anchor.end()+1, NULLPTR)
+        .insertContentAt($anchor.end() + 1, NULLPTR)
         .updateAttributes("placeholderInput", {
           "data-textInit": NULLPTR + input.textContent + NULLPTR,
         })
         .setTextSelection($anchor.start() + 1)
         .run();
       this.storage.prevValue = NULLPTR + input.textContent + NULLPTR;
-    } 
-   
-    if (!input.textContent || !input.textContent.replaceAll(NULLPTR,'')) {            
+    }
+
+    if (!input.textContent || !input.textContent.replaceAll(NULLPTR, "")) {
       editor
         .chain()
-        .deleteRange({ from: $anchor.start(), to: $anchor.end()})
+        .deleteRange({ from: $anchor.start(), to: $anchor.end() })
         .insertContentAt($anchor.start(), input.attrs["data-textInit"])
         .setTextSelection($anchor.start() + 1)
         .run();
 
-        this.storage.prevValue = input.textContent;
-        addClass(editor, input, "empty");
-    }   
- 
+      this.storage.prevValue = input.textContent;
+      addClass(editor, input, "empty");
+    }
+
     if (input.attrs["data-textInit"] === input.textContent) {
       editor
         .chain()
         .setTextSelection($anchor.start() + 1)
         .run();
+        this.storage.prevValue = input.textContent;
+
       addClass(editor, input, "empty");
     }
 
@@ -49,7 +50,6 @@ export default Extension.create({
     ) {
       editor.commands.deleteNode("placeholderInput");
     }
-
   },
 
   onCreate({ editor }) {
@@ -58,20 +58,22 @@ export default Extension.create({
         const input = getCurrentInput(editor);
         if (!input) return;
         const { selection } = editor.state;
-        const { $anchor } = selection;                
+        const { $anchor } = selection;
         if (
-          input.attrs["data-textInit"] === this.storage.prevValue &&
-          ev.data || !this.storage.prevValue.replaceAll(NULLPTR, "") && ev.data
-        ) {          
+          (input.attrs["data-textInit"] === this.storage.prevValue &&
+            ev.data) ||
+          (!this.storage.prevValue.replaceAll(NULLPTR, "") && ev.data)
+        ) {
           editor.commands.insertContentAt(
             { from: $anchor.start(), to: $anchor.end() },
             NULLPTR + ev.data + NULLPTR
           );
-          editor.chain().setTextSelection(selection.from).run()
+          editor.chain().setTextSelection(selection.from).run();
           removeClass(editor, input, "empty");
         }
         if (
-          this.storage.prevValue[0] !== input.textContent[0] && input.textContent[0]!==NULLPTR
+          this.storage.prevValue[0] !== input.textContent[0] &&
+          input.textContent[0] !== NULLPTR
         ) {
           editor.commands.deleteNode("placeholderInput");
         }
@@ -82,18 +84,26 @@ export default Extension.create({
       const input = getCurrentInput(editor);
       const { selection } = editor.state;
 
-      if(!input) return      
-      if (input.attrs.class.split(' ').includes('empty') && ["ArrowLeft", "ArrowRight"].includes(event.key)) {
-        if(event.key == 'ArrowLeft' ){
-          editor.chain().setTextSelection(selection.$anchor.start()-2).run()
+      if (!input) return;
+      if (
+        input.attrs.class.split(" ").includes("empty") &&
+        ["ArrowLeft", "ArrowRight"].includes(event.key)
+      ) {
+        if (event.key == "ArrowLeft") {
+          editor
+            .chain()
+            .setTextSelection(selection.$anchor.start() - 1)
+            .run();
         }
-        if(event.key == 'ArrowRight' ){
-          editor.chain().setTextSelection(selection.$anchor.end()+2).run()
+        if (event.key == "ArrowRight") {
+          editor
+            .chain()
+            .setTextSelection(selection.$anchor.end() + 2)
+            .run();
         }
         event.preventDefault();
       }
-  });
-  
+    });
   },
 });
 
