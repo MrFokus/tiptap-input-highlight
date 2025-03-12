@@ -4,7 +4,6 @@
 
 <script setup lang="ts">
 import { Editor, EditorContent } from "@tiptap/vue-3";
-import Focus from "@tiptap/extension-focus";
 import { PlaceholderInput } from "~/TipTap/PlaceholderInputNode";
 import InputPlugin from "~/TipTap/InputPlugin";
 import Document from "@tiptap/extension-document";
@@ -67,7 +66,6 @@ onMounted(() => {
     cursor: pointer;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
-    word-break: break-all;
   }
   span.input.empty.has-focus {
     color: rgba(4, 92, 251, 0.4);
